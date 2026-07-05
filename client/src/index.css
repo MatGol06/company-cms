@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+/* Custom Base Styles for Company CMS */
+@theme {
+  --color-primary: #2563EB;
+  --color-secondary: #1E293B;
+  --color-surface: #FFFFFF;
+  --color-background: #F8FAFC;
+}
+
+body {
+  @apply bg-background text-secondary;
+}
