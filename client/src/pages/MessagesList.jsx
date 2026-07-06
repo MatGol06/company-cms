@@ -5,17 +5,14 @@ import axios from 'axios';
 export default function MessagesList() {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const token = localStorage.getItem('cms_token');
-
+  
   useEffect(() => {
     fetchMessages();
   }, []);
 
   const fetchMessages = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/messages`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/messages`);
       setMessages(response.data);
     } catch (error) {
       console.error('Gagal memuatkan mesej', error);
@@ -27,9 +24,7 @@ export default function MessagesList() {
   const handleDelete = async (id) => {
     if (window.confirm('Adakah anda pasti mahu membuang mesej ini secara kekal?')) {
       try {
-        await axios.delete(`${import.meta.env.VITE_API_URL}/messages/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await axios.delete(`${import.meta.env.VITE_API_URL}/messages/${id}`);
         fetchMessages();
       } catch (error) {
         alert('Ralat! Gagal memadam mesej.');

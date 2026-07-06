@@ -22,8 +22,7 @@ export default function Login() {
       });
 
       // Simpan Token & Data Admin di LocalStorage
-      localStorage.setItem('cms_token', response.data.token);
-      localStorage.setItem('cms_user', JSON.stringify(response.data));
+            localStorage.setItem('cms_user', JSON.stringify(response.data));
       
       // Bawa Admin ke Dashboard
       navigate('/admin');

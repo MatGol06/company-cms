@@ -7,8 +7,7 @@ export default function MessageDetail() {
   const navigate = useNavigate();
   const [message, setMessage] = useState(null);
   const [error, setError] = useState('');
-  const token = localStorage.getItem('cms_token');
-
+  
   useEffect(() => {
     fetchMessage();
   }, [id]);
@@ -16,9 +15,7 @@ export default function MessageDetail() {
   const fetchMessage = async () => {
     try {
       // Backend auto-set isRead kepada true bila GET dipanggil
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/messages/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/messages/${id}`);
       setMessage(response.data);
     } catch (err) {
       setError('Gagal memuat turun butiran mesej. Mungkin mesej telah dipadam.');

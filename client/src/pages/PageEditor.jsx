@@ -16,8 +16,7 @@ export default function PageEditor() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const token = localStorage.getItem('cms_token');
-
+  
   useEffect(() => {
     if (!isNew) {
       fetchPageData();
@@ -46,9 +45,7 @@ export default function PageEditor() {
       // Validate JSON (supaya DB tak rosak)
       const parsedContent = JSON.parse(formData.content);
 
-      const config = {
-        headers: { Authorization: `Bearer ${token}` }
-      };
+      const config = {};
 
       const payload = {
         title: formData.title,

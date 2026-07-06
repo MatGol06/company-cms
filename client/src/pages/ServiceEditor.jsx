@@ -6,7 +6,7 @@ export default function ServiceEditor() {
   const { id } = useParams();
   const navigate = useNavigate();
   const isNew = id === 'new';
-
+  
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -15,8 +15,7 @@ export default function ServiceEditor() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const token = localStorage.getItem('cms_token');
-
+  
   useEffect(() => {
     if (!isNew) {
       fetchServiceData();
@@ -48,9 +47,7 @@ export default function ServiceEditor() {
     setError('');
 
     try {
-      const config = {
-        headers: { Authorization: `Bearer ${token}` }
-      };
+      const config = {};
 
       if (isNew) {
         await axios.post(`${import.meta.env.VITE_API_URL}/services`, formData, config);

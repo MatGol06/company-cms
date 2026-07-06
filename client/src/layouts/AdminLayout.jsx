@@ -12,8 +12,10 @@ export default function AdminLayout() {
     return <Navigate to="/login" replace />;
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('cms_token');
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/auth/logout`);
+    } catch (err) { console.error(err); }
     localStorage.removeItem('cms_user');
     navigate('/login');
   };
@@ -42,6 +44,9 @@ export default function AdminLayout() {
           </Link>
           <Link to="/admin/messages" className="block px-4 py-3 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition font-medium">
             📥 Peti Masuk (Inbox)
+          </Link>
+          <Link to="/admin/settings" className="block px-4 py-3 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition font-medium">
+            ⚙️ Tetapan Sistem
           </Link>
         </nav>
       </aside>

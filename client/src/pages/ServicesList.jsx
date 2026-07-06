@@ -5,8 +5,7 @@ import axios from 'axios';
 export default function ServicesList() {
   const [services, setServices] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const token = localStorage.getItem('cms_token');
-
+  
   useEffect(() => {
     fetchServices();
   }, []);
@@ -25,9 +24,7 @@ export default function ServicesList() {
   const handleDelete = async (id) => {
     if (window.confirm('Adakah anda pasti mahu membuang rekod servis ini secara kekal?')) {
       try {
-        await axios.delete(`${import.meta.env.VITE_API_URL}/services/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await axios.delete(`${import.meta.env.VITE_API_URL}/services/${id}`);
         fetchServices(); // Refresh senarai selepas padam
       } catch (error) {
         alert('Ralat! Gagal memadam servis dari pangkalan data.');

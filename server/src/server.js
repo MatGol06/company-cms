@@ -1,28 +1,42 @@
+// Import Modules
 const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const morgan = require('morgan');
+require('dotenv').config();
 
-// Muat pembolehubah dari fail .env
-dotenv.config({ path: './.env' });
-
+// Create Express App
 const app = express();
 
 // Middleware
+app.use(morgan('dev')); // 'CCTV' untuk merakam setiap request API
+app.use(helmet()); // Kunci HTTP Headers supaya tak terdedah kepada hacker
+app.use(cors({
+  origin: 'http://localhost:5173', // Benarkan Frontend
+  credentials: true // Benarkan penghantaran Cookies
+}));
 app.use(express.json());
-app.use(cors());
+app.use(cookieParser());
+app.use(mongoSanitize()); // Halang NoSQL Injection (buang tanda $ dan .)
+app.use(xss()); // Halang serangan XSS (bersihkan tag HTML jahat dari input)
 
 // Import Routes
 const authRoutes = require('./routes/authRoutes');
 const pagesRoutes = require('./routes/pagesRoutes');
 const servicesRoutes = require('./routes/servicesRoutes');
 const messagesRoutes = require('./routes/messagesRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
 
 // Mount Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/pages', pagesRoutes);
 app.use('/api/v1/services', servicesRoutes);
 app.use('/api/v1/messages', messagesRoutes);
+app.use('/api/v1/settings', settingsRoutes);
 
 // Endpoint Asas (Untuk test adakah server hidup)
 app.get('/', (req, res) => {
