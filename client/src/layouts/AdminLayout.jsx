@@ -1,13 +1,14 @@
-import { Navigate, Outlet, useNavigate, Link } from 'react-router-dom';
+import { Navigate, Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { LayoutDashboard, FileText, Wrench, Inbox, Settings, LogOut, Hexagon, Briefcase } from 'lucide-react';
 
 export default function AdminLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
   
-  // Periksa jika user dah login
   const token = localStorage.getItem('cms_token');
   const user = JSON.parse(localStorage.getItem('cms_user') || '{}');
 
-  // Kalau tiada token, tendang keluar ke page login
   if (!token) {
     return <Navigate to="/login" replace />;
   }
@@ -20,63 +21,82 @@ export default function AdminLayout() {
     navigate('/login');
   };
 
+  const navItems = [
+    { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
+    { name: 'Pages', path: '/admin/pages', icon: FileText },
+    { name: 'Services', path: '/admin/services', icon: Wrench },
+    { name: 'Projects', path: '/admin/projects', icon: Briefcase },
+    { name: 'Inbox', path: '/admin/messages', icon: Inbox },
+    { name: 'System Settings', path: '/admin/settings', icon: Settings },
+  ];
+
   return (
-    <div className="min-h-screen bg-background flex font-sans">
+    <div className="min-h-screen bg-slate-950 text-slate-300 flex font-sans selection:bg-blue-500/30">
       
       {/* Sidebar Kiri */}
-      <aside className="w-64 bg-secondary text-white flex flex-col hidden md:flex shadow-2xl z-10">
-        <div className="p-6">
-          <h2 className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
-            <span className="w-8 h-8 rounded bg-primary flex items-center justify-center text-sm">C</span>
+      <aside className="w-64 bg-slate-950 border-r border-slate-800 flex-col hidden md:flex z-10">
+        <div className="p-6 border-b border-slate-800/50">
+          <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-3">
+            <Hexagon className="w-7 h-7 text-blue-500 fill-blue-500/20" />
             Company CMS
           </h2>
         </div>
         
-        <nav className="flex-1 px-4 space-y-2 mt-4">
-          <Link to="/admin" className="block px-4 py-3 hover:bg-white/10 text-white rounded-lg transition font-medium">
-            📊 Papan Pemuka
-          </Link>
-          <Link to="/admin/pages" className="block px-4 py-3 hover:bg-white/10 text-white rounded-lg transition font-medium">
-            📄 Halaman (Pages)
-          </Link>
-          <Link to="/admin/services" className="block px-4 py-3 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition font-medium">
-            🛠️ Servis Kami
-          </Link>
-          <Link to="/admin/messages" className="block px-4 py-3 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition font-medium">
-            📥 Peti Masuk (Inbox)
-          </Link>
-          <Link to="/admin/settings" className="block px-4 py-3 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition font-medium">
-            ⚙️ Tetapan Sistem
-          </Link>
+        <nav className="flex-1 px-4 py-6 space-y-1">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path || (item.path !== '/admin' && location.pathname.startsWith(item.path));
+            const Icon = item.icon;
+            return (
+              <Link 
+                key={item.path} 
+                to={item.path} 
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 font-medium text-sm ${
+                  isActive 
+                    ? 'bg-blue-600/10 text-blue-400 font-semibold' 
+                    : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                }`}
+              >
+                <Icon className={`w-4 h-4 ${isActive ? 'text-blue-400' : 'text-slate-500'}`} />
+                {item.name}
+              </Link>
+            )
+          })}
         </nav>
+
+        <div className="p-4 border-t border-slate-800/50">
+           <div className="px-3 py-2 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-white">{user.name}</p>
+                <p className="text-xs text-slate-500 capitalize">{user.role}</p>
+              </div>
+           </div>
+        </div>
       </aside>
 
       {/* Ruang Kanan (Content) */}
-      <main className="flex-1 flex flex-col min-w-0">
+      <main className="flex-1 flex flex-col min-w-0 bg-slate-950">
         
         {/* Navbar Atas */}
-        <header className="bg-surface h-16 shadow-sm flex items-center justify-between px-8 z-0">
-          <h1 className="text-xl font-bold text-secondary">Dashboard</h1>
+        <header className="h-16 bg-slate-950/80 backdrop-blur-md border-b border-slate-800 flex items-center justify-between px-6 sticky top-0 z-20">
+          <h1 className="text-sm font-medium text-slate-400">Admin Control Panel</h1>
           
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
-                {user.name?.charAt(0) || 'A'}
-              </div>
-              <span className="text-sm font-medium text-secondary">{user.name}</span>
-            </div>
-            
+          <div className="flex items-center gap-4">
+            <a href="/" target="_blank" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+              View Site ↗
+            </a>
+            <div className="h-4 w-px bg-slate-800"></div>
             <button 
-              onClick={handleLogout}
-              className="text-sm px-4 py-2 text-red-600 bg-red-50 hover:bg-red-100 font-medium rounded-lg transition-colors"
+              onClick={handleLogout} 
+              className="text-sm font-medium text-red-400 hover:text-red-300 flex items-center gap-2 transition-colors"
             >
-              Log Keluar
+              <LogOut className="w-4 h-4" />
+              Logout
             </button>
           </div>
         </header>
 
-        {/* Tempat Render Page Berubah-ubah */}
-        <div className="p-8 flex-1 overflow-y-auto">
+        {/* Dynamic Page Content */}
+        <div className="p-6 md:p-8 overflow-y-auto">
           <Outlet />
         </div>
       </main>

@@ -4,10 +4,11 @@ export default function Navbar({ settings }) {
   const location = useLocation();
 
   const navLinks = [
-    { name: 'Utama', path: '/' },
-    { name: 'Tentang Kami', path: '/tentang-kami' },
-    { name: 'Servis', path: '/services' },
-    { name: 'Hubungi Kami', path: '/contact' }
+    { name: 'Home', path: '/' },
+    { name: 'About Me', path: '/about-us' },
+    { name: 'Services', path: '/services' },
+    { name: 'Projects', path: '/projects' },
+    { name: 'Contact Me', path: '/contact' }
   ];
 
   return (
@@ -30,7 +31,7 @@ export default function Navbar({ settings }) {
               </div>
             )}
             <span className="font-bold text-xl text-secondary tracking-tight group-hover:text-primary transition-colors">
-              {settings?.siteName || 'Syarikat Kami'}
+              {settings?.siteName || 'Our Company'}
             </span>
           </Link>
 
@@ -53,7 +54,7 @@ export default function Navbar({ settings }) {
               to="/contact" 
               className="bg-secondary hover:bg-slate-800 text-white px-6 py-2.5 rounded-full font-medium transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
             >
-              Mula Projek
+              Start Project
             </Link>
           </div>
 

@@ -42,7 +42,7 @@ export default function Login() {
           <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold shadow-md">
             CMS
           </div>
-          <h1 className="text-2xl font-bold text-secondary mb-2">Log Masuk Sistem</h1>
+          <h1 className="text-2xl font-bold text-secondary mb-2">Login Sistem</h1>
           <p className="text-slate-500 text-sm">Gunakan akaun admin untuk akses panel kawalan</p>
         </div>
 
@@ -68,7 +68,7 @@ export default function Login() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-secondary mb-1">Kata Laluan</label>
+            <label className="block text-sm font-medium text-secondary mb-1">Password</label>
             <input
               type="password"
               value={password}
@@ -86,7 +86,7 @@ export default function Login() {
               isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-primary hover:bg-blue-700 hover:shadow-lg'
             }`}
           >
-            {isLoading ? 'Mengesahkan...' : 'Log Masuk Sekarang'}
+            {isLoading ? 'Mengesahkan...' : 'Login Sekarang'}
           </button>
         </form>
       </div>

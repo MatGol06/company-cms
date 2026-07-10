@@ -12,6 +12,10 @@ const serviceSchema = new mongoose.Schema({
   icon: {
     type: String, // Class icon (contoh: fa-solid fa-code) atau link imej
   },
+  imageUrl: {
+    type: String,
+    default: ''
+  },
   order: {
     type: Number,
     default: 0, // Untuk susunan dalam page

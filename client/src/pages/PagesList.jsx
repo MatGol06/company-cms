@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { Plus, Edit2, FileText } from 'lucide-react';
 
 export default function PagesList() {
   const [pages, setPages] = useState([]);
@@ -22,54 +23,59 @@ export default function PagesList() {
   };
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="animate-in fade-in duration-700">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-secondary mb-1">Pengurusan Halaman</h2>
-          <p className="text-slate-500">Uruskan kandungan muka depan (Home, About) web syarikat anda.</p>
+          <h2 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+             <FileText className="w-8 h-8 text-blue-500" />
+             Pages Management
+          </h2>
+          <p className="text-slate-400">Manage the public-facing pages for your website.</p>
         </div>
         <Link 
           to="/admin/pages/new" 
-          className="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg transition-all font-medium shadow-md hover:shadow-lg flex items-center gap-2"
+          className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-lg transition-all font-medium shadow-[0_0_15px_rgba(37,99,235,0.2)] hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] flex items-center gap-2"
         >
-          <span>+ Cipta Halaman Baru</span>
+          <Plus className="w-5 h-5" />
+          <span>Create New Page</span>
         </Link>
       </div>
 
-      <div className="bg-surface rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-slate-900 rounded-xl shadow-sm border border-slate-800 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-100">
-                <th className="px-6 py-5 font-bold text-slate-500 uppercase tracking-wider text-xs">Tajuk Halaman</th>
-                <th className="px-6 py-5 font-bold text-slate-500 uppercase tracking-wider text-xs">URL (Slug)</th>
-                <th className="px-6 py-5 font-bold text-slate-500 uppercase tracking-wider text-xs">Kemaskini Terakhir</th>
-                <th className="px-6 py-5 font-bold text-slate-500 uppercase tracking-wider text-xs text-right">Tindakan</th>
+              <tr className="bg-slate-900/50 border-b border-slate-800">
+                <th className="px-6 py-5 font-semibold text-slate-400 uppercase tracking-wider text-xs">Page Title</th>
+                <th className="px-6 py-5 font-semibold text-slate-400 uppercase tracking-wider text-xs">URL (Slug)</th>
+                <th className="px-6 py-5 font-semibold text-slate-400 uppercase tracking-wider text-xs">Last Updated</th>
+                <th className="px-6 py-5 font-semibold text-slate-400 uppercase tracking-wider text-xs text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-800/50">
               {isLoading ? (
-                <tr><td colSpan="4" className="px-6 py-12 text-center text-slate-500 animate-pulse">Memuatkan pangkalan data...</td></tr>
+                <tr><td colSpan="4" className="px-6 py-12 text-center text-slate-500 animate-pulse text-sm">Loading database...</td></tr>
               ) : pages.length === 0 ? (
-                <tr><td colSpan="4" className="px-6 py-12 text-center text-slate-500">Tiada halaman direkodkan setakat ini. Sila cipta yang pertama.</td></tr>
+                <tr><td colSpan="4" className="px-6 py-12 text-center text-slate-500 text-sm">No pages recorded. Please create a new one.</td></tr>
               ) : (
                 pages.map((page) => (
-                  <tr key={page._id} className="hover:bg-slate-50 transition-colors group">
-                    <td className="px-6 py-5 font-semibold text-secondary">{page.title}</td>
+                  <tr key={page._id} className="hover:bg-slate-800/30 transition-colors group">
+                    <td className="px-6 py-5 font-medium text-white">{page.title}</td>
                     <td className="px-6 py-5">
-                      <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-md text-sm font-mono border border-slate-200">
+                      <span className="bg-slate-800 text-slate-300 px-3 py-1 rounded-md text-xs font-mono border border-slate-700">
                         /{page.slug}
                       </span>
                     </td>
-                    <td className="px-6 py-5 text-slate-500 text-sm">
-                      {new Date(page.updatedAt).toLocaleDateString('ms-MY', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    <td className="px-6 py-5 text-slate-400 text-sm">
+                      {new Date(page.updatedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </td>
                     <td className="px-6 py-5 text-right">
                       <Link 
                         to={`/admin/pages/${page.slug}`} 
-                        className="text-primary hover:text-blue-700 font-medium bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg transition-colors inline-block"
+                        className="text-blue-400 hover:text-blue-300 font-medium bg-blue-600/10 hover:bg-blue-600/20 px-4 py-2 rounded-lg transition-colors inline-flex items-center gap-2 text-sm"
                       >
-                        Edit Kandungan
+                        <Edit2 className="w-4 h-4" />
+                        Edit Content
                       </Link>
                     </td>
                   </tr>
