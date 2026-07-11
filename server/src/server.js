@@ -17,8 +17,9 @@ app.use(morgan('dev')); // 'CCTV' untuk merakam setiap request API
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" } // Benarkan imej diload ke localhost:5173
 })); // Kunci HTTP Headers supaya tak terdedah kepada hacker
+const allowedOrigin = process.env.CLIENT_URL ? process.env.CLIENT_URL.replace(/\/$/, '') : 'http://localhost:5173';
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173', // Benarkan Frontend dari Cloud atau Local
+  origin: allowedOrigin, // Benarkan Frontend dari Cloud atau Local (buang slash di hujung jika ada)
   credentials: true // Benarkan penghantaran Cookies
 }));
 app.use(express.json());
