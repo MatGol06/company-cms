@@ -54,45 +54,45 @@ export default function Settings() {
       <div className="mb-8 flex items-center gap-3">
         <SettingsIcon className="w-8 h-8 text-blue-500" />
         <div>
-          <h2 className="text-3xl font-bold text-white mb-1">System Settings</h2>
-          <p className="text-slate-400">Manage your business identity and main website appearance.</p>
+          <h2 className="text-3xl font-bold text-slate-800 mb-1">System Settings</h2>
+          <p className="text-slate-500">Manage your business identity and main website appearance.</p>
         </div>
       </div>
 
       {message && (
-        <div className="bg-green-500/10 border border-green-500/20 text-green-400 p-4 rounded-xl mb-6 flex items-center gap-3 font-medium animate-in fade-in">
+        <div className="bg-green-500/10 border border-green-500/20 text-green-400 p-4 rounded-2xl mb-6 flex items-center gap-3 font-medium animate-in fade-in">
           <CheckCircle className="w-5 h-5" />
           {message}
         </div>
       )}
 
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl mb-6 flex items-center gap-3 font-medium">
+        <div className="bg-red-500/10 border border-red-500/20 text-red-600 p-4 rounded-2xl mb-6 flex items-center gap-3 font-medium">
           <AlertCircle className="w-5 h-5" />
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-slate-900 p-8 sm:p-10 rounded-2xl shadow-sm border border-slate-800 space-y-8">
+      <form onSubmit={handleSubmit} className="bg-white p-8 sm:p-10 rounded-[2rem] shadow-sm border border-slate-100 space-y-8">
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Company / Website Name</label>
+            <label className="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Company / Website Name</label>
             <input
               type="text"
               value={formData.siteName}
               onChange={(e) => setFormData({...formData, siteName: e.target.value})}
-              className="w-full px-5 py-3 bg-slate-950 border border-slate-800 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder-slate-600"
+              className="w-full px-5 py-3 bg-slate-50 border border-slate-100 text-slate-800 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder-slate-400"
               required
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Official Contact Email</label>
+            <label className="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Official Contact Email</label>
             <input
               type="email"
               value={formData.contactEmail}
               onChange={(e) => setFormData({...formData, contactEmail: e.target.value})}
-              className="w-full px-5 py-3 bg-slate-950 border border-slate-800 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder-slate-600"
+              className="w-full px-5 py-3 bg-slate-50 border border-slate-100 text-slate-800 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder-slate-400"
               required
             />
             <p className="text-xs text-slate-500 mt-2">Messages from the website form will be related to this email.</p>
@@ -100,25 +100,25 @@ export default function Settings() {
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Company Description / Motto</label>
+          <label className="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Company Description / Motto</label>
           <textarea
             value={formData.siteDescription}
             onChange={(e) => setFormData({...formData, siteDescription: e.target.value})}
-            className="w-full px-5 py-4 bg-slate-950 border border-slate-800 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all h-28 leading-relaxed placeholder-slate-600"
+            className="w-full px-5 py-4 bg-slate-50 border border-slate-100 text-slate-800 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all h-28 leading-relaxed placeholder-slate-400"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Website Logo URL (Link)</label>
+          <label className="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Website Logo URL (Link)</label>
           <input
             type="text"
             value={formData.logoUrl}
             onChange={(e) => setFormData({...formData, logoUrl: e.target.value})}
-            className="w-full px-5 py-3 bg-slate-950 border border-slate-800 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder-slate-600"
+            className="w-full px-5 py-3 bg-slate-50 border border-slate-100 text-slate-800 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder-slate-400"
             placeholder="e.g: https://res.cloudinary.com/contoh-logo.png"
           />
           {formData.logoUrl && (
-            <div className="mt-4 p-5 border border-slate-800 rounded-xl bg-slate-950/50 inline-block">
+            <div className="mt-4 p-5 border border-slate-100 rounded-2xl bg-slate-50/50 inline-block">
               <p className="text-xs text-slate-500 mb-3 font-semibold uppercase tracking-wider">Logo Preview</p>
               <img 
                 src={formData.logoUrl} 
@@ -130,11 +130,11 @@ export default function Settings() {
           )}
         </div>
 
-        <div className="flex justify-end pt-8 border-t border-slate-800">
+        <div className="flex justify-end pt-8 border-t border-slate-100">
           <button 
             type="submit" 
             disabled={isSaving} 
-            className="bg-blue-600 hover:bg-blue-500 text-white font-medium px-10 py-3 rounded-xl shadow-[0_0_15px_rgba(37,99,235,0.2)] transition-all hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:-translate-y-0.5 disabled:opacity-70 disabled:hover:translate-y-0 disabled:shadow-none"
+            className="bg-[#1f1f1f] hover:bg-black text-white font-medium px-10 py-3 rounded-2xl shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-70 disabled:hover:translate-y-0 disabled:shadow-none"
           >
             {isSaving ? 'Saving Changes...' : 'Save All Settings'}
           </button>

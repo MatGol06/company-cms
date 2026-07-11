@@ -11,9 +11,15 @@ router.post('/', protect, adminOnly, (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: 'Tiada fail dimuat naik.' });
     }
+    // Semak samada menggunakan Cloudinary (ada req.file.path yang mula dengan http) 
+    // atau Local Storage (guna req.file.filename)
+    let imageUrl = '';
+    if (req.file.path && req.file.path.startsWith('http')) {
+      imageUrl = req.file.path; // URL Penuh dari Cloudinary
+    } else {
+      imageUrl = `/uploads/${req.file.filename}`; // Local Path
+    }
     
-    // Path public yang akan dipulangkan ke client
-    const imageUrl = `/uploads/${req.file.filename}`;
     res.json({ imageUrl });
   });
 });

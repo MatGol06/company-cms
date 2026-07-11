@@ -1,6 +1,9 @@
 import { Navigate, Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { LayoutDashboard, FileText, Wrench, Inbox, Settings, LogOut, Hexagon, Briefcase } from 'lucide-react';
+import { 
+  Home, FileText, Wrench, Briefcase, Inbox, 
+  Settings, LogOut, Search, Hexagon
+} from 'lucide-react';
 
 export default function AdminLayout() {
   const navigate = useNavigate();
@@ -21,28 +24,28 @@ export default function AdminLayout() {
     navigate('/login');
   };
 
+  // Menu yang berasaskan fungsi CMS kita
   const navItems = [
-    { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
+    { name: 'Dashboard', path: '/admin', icon: Home },
     { name: 'Pages', path: '/admin/pages', icon: FileText },
     { name: 'Services', path: '/admin/services', icon: Wrench },
     { name: 'Projects', path: '/admin/projects', icon: Briefcase },
     { name: 'Inbox', path: '/admin/messages', icon: Inbox },
-    { name: 'System Settings', path: '/admin/settings', icon: Settings },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-300 flex font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen bg-[#e5e7eb] text-slate-800 flex font-sans">
       
-      {/* Sidebar Kiri */}
-      <aside className="w-64 bg-slate-950 border-r border-slate-800 flex-col hidden md:flex z-10">
-        <div className="p-6 border-b border-slate-800/50">
-          <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-3">
-            <Hexagon className="w-7 h-7 text-blue-500 fill-blue-500/20" />
-            Company CMS
+      {/* White Sidebar */}
+      <aside className="w-[280px] bg-white flex-col hidden md:flex z-10 shrink-0 shadow-sm border-r border-slate-100">
+        <div className="p-8">
+          <h2 className="text-3xl font-black tracking-tight text-slate-900 flex items-center gap-2">
+            <Hexagon className="w-8 h-8 text-blue-600 fill-blue-600/20" />
+            Company
           </h2>
         </div>
         
-        <nav className="flex-1 px-4 py-6 space-y-1">
+        <nav className="flex-1 px-6 py-2 space-y-3 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path || (item.path !== '/admin' && location.pathname.startsWith(item.path));
             const Icon = item.icon;
@@ -50,53 +53,60 @@ export default function AdminLayout() {
               <Link 
                 key={item.path} 
                 to={item.path} 
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 font-medium text-sm ${
+                className={`flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-200 text-[15px] ${
                   isActive 
-                    ? 'bg-blue-600/10 text-blue-400 font-semibold' 
-                    : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                    ? 'text-slate-900 font-bold bg-slate-50' 
+                    : 'text-slate-500 hover:text-slate-900 font-medium'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-blue-400' : 'text-slate-500'}`} />
+                <Icon className={`w-5 h-5 ${isActive ? 'text-slate-900' : 'text-slate-400'}`} strokeWidth={isActive ? 2.5 : 2} />
                 {item.name}
               </Link>
             )
           })}
         </nav>
 
-        <div className="p-4 border-t border-slate-800/50">
-           <div className="px-3 py-2 flex items-center justify-between">
-              <div>
-                <p className="text-sm font-semibold text-white">{user.name}</p>
-                <p className="text-xs text-slate-500 capitalize">{user.role}</p>
-              </div>
-           </div>
+        {/* Bottom Actions (Settings & Logout) */}
+        <div className="p-6 space-y-2 mb-4 border-t border-slate-50">
+           <Link to="/admin/settings" className="flex items-center gap-4 px-4 py-2.5 text-[15px] text-slate-500 hover:text-slate-900 font-medium transition-colors">
+             <Settings className="w-5 h-5 text-slate-400" /> Settings
+           </Link>
+           <button onClick={handleLogout} className="w-full flex items-center gap-4 px-4 py-2.5 text-[15px] text-slate-500 hover:text-red-600 font-medium transition-colors">
+             <LogOut className="w-5 h-5 text-slate-400" /> Log out
+           </button>
         </div>
       </aside>
 
-      {/* Ruang Kanan (Content) */}
-      <main className="flex-1 flex flex-col min-w-0 bg-slate-950">
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col min-w-0 bg-[#e5e7eb] px-10 py-8">
         
-        {/* Navbar Atas */}
-        <header className="h-16 bg-slate-950/80 backdrop-blur-md border-b border-slate-800 flex items-center justify-between px-6 sticky top-0 z-20">
-          <h1 className="text-sm font-medium text-slate-400">Admin Control Panel</h1>
+        {/* Top Header Row */}
+        <header className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-800">Welcome back, {user.name}</h1>
+            <p className="text-sm text-slate-500 font-medium mt-1">Manage your website content efficiently.</p>
+          </div>
           
           <div className="flex items-center gap-4">
-            <a href="/" target="_blank" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
-              View Site ↗
+            <div className="relative">
+              <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+              <input 
+                type="text" 
+                placeholder="Search..." 
+                className="pl-12 pr-4 py-3 bg-white rounded-full text-sm font-medium focus:outline-none w-64 shadow-sm border border-slate-100"
+              />
+            </div>
+            <a href="/" target="_blank" className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm relative text-slate-600 hover:text-blue-600 hover:bg-slate-50 transition-colors border border-slate-100" title="View Public Site">
+               <Home className="w-5 h-5" />
             </a>
-            <div className="h-4 w-px bg-slate-800"></div>
-            <button 
-              onClick={handleLogout} 
-              className="text-sm font-medium text-red-400 hover:text-red-300 flex items-center gap-2 transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-              Logout
-            </button>
+            <div className="w-12 h-12 rounded-full overflow-hidden shadow-sm border-2 border-white bg-slate-200">
+              <img src={`https://ui-avatars.com/api/?name=${user.name}&background=random`} alt="Profile" className="w-full h-full object-cover" />
+            </div>
           </div>
         </header>
 
         {/* Dynamic Page Content */}
-        <div className="p-6 md:p-8 overflow-y-auto">
+        <div className="overflow-y-auto pb-10">
           <Outlet />
         </div>
       </main>

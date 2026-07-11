@@ -46,7 +46,7 @@ export default function Navbar({ settings }) {
                     ? 'text-primary' 
                     : 'text-slate-500 hover:text-secondary'
                 }`}
-              >
+              >    
                 {link.name}
               </Link>
             ))}

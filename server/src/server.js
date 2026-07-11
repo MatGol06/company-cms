@@ -18,7 +18,7 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" } // Benarkan imej diload ke localhost:5173
 })); // Kunci HTTP Headers supaya tak terdedah kepada hacker
 app.use(cors({
-  origin: 'http://localhost:5173', // Benarkan Frontend
+  origin: process.env.CLIENT_URL || 'http://localhost:5173', // Benarkan Frontend dari Cloud atau Local
   credentials: true // Benarkan penghantaran Cookies
 }));
 app.use(express.json());
