@@ -9,10 +9,10 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const token = localStorage.getItem('cms_token');
-  const user = JSON.parse(localStorage.getItem('cms_user') || '{}');
+  const userString = localStorage.getItem('cms_user');
+  const user = JSON.parse(userString || '{}');
 
-  if (!token) {
+  if (!userString) {
     return <Navigate to="/login" replace />;
   }
 
