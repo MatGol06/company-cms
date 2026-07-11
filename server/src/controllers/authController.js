@@ -25,8 +25,8 @@ const login = async (req, res) => {
       // Tetapkan token ke dalam HTTP-Only Cookie
       res.cookie('jwt', token, {
         httpOnly: true, // Tidak boleh diakses oleh skrip Javascript (Selamat dari XSS)
-        secure: process.env.NODE_ENV === 'production', // Gunakan true jika HTTPS
-        sameSite: 'strict', // Lindung dari serangan CSRF
+        secure: process.env.NODE_ENV === 'production', // Mesti true untuk sameSite 'none' (HTTPS)
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', // Benarkan cross-origin jika production
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 hari tempoh sah
       });
 
@@ -49,9 +49,10 @@ const login = async (req, res) => {
 // @route   POST /api/v1/auth/logout
 // @access  Public
 const logout = (req, res) => {
-  // Padam cookie dengan menetapkan tarikh luput ke masa lepas
   res.cookie('jwt', '', {
     httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
     expires: new Date(0),
   });
   res.status(200).json({ message: 'Berjaya log keluar' });
