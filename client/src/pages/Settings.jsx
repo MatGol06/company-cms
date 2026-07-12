@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Settings as SettingsIcon, CheckCircle, AlertCircle } from 'lucide-react';
+import { Settings as SettingsIcon, CheckCircle, AlertCircle, ImagePlus, Loader2 } from 'lucide-react';
 
 export default function Settings() {
   const [formData, setFormData] = useState({
@@ -13,6 +13,7 @@ export default function Settings() {
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     fetchSettings();
@@ -44,6 +45,27 @@ export default function Settings() {
       setError(err.response?.data?.message || 'Gagal menyimpan tetapan.');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setError('');
+    const uploadData = new FormData();
+    uploadData.append('image', file);
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/upload`, uploadData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setFormData({ ...formData, logoUrl: response.data.imageUrl });
+    } catch (err) {
+      setError('Gagal memuat naik imej logo. Sila cuba lagi.');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -109,25 +131,54 @@ export default function Settings() {
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Website Logo URL (Link)</label>
-          <input
-            type="text"
-            value={formData.logoUrl}
-            onChange={(e) => setFormData({...formData, logoUrl: e.target.value})}
-            className="w-full px-5 py-3 bg-slate-50 border border-slate-100 text-slate-800 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder-slate-400"
-            placeholder="e.g: https://res.cloudinary.com/contoh-logo.png"
-          />
-          {formData.logoUrl && (
-            <div className="mt-4 p-5 border border-slate-100 rounded-2xl bg-slate-50/50 inline-block">
-              <p className="text-xs text-slate-500 mb-3 font-semibold uppercase tracking-wider">Logo Preview</p>
-              <img 
-                src={formData.logoUrl} 
-                alt="Logo Preview" 
-                className="max-h-20 object-contain drop-shadow-md" 
-                onError={(e) => { e.target.style.display = 'none'; }} 
-              />
+          <label className="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Company Logo</label>
+          <div className="flex items-center gap-6">
+            {/* Logo Preview Area */}
+            <div className="w-32 h-32 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center overflow-hidden shrink-0 relative group">
+              {formData.logoUrl ? (
+                <img 
+                  src={formData.logoUrl} 
+                  alt="Company Logo" 
+                  className="w-full h-full object-contain p-2"
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
+              ) : (
+                <ImagePlus className="w-8 h-8 text-slate-300" />
+              )}
+              {isUploading && (
+                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
+                  <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
+                </div>
+              )}
             </div>
-          )}
+
+            {/* Upload Button */}
+            <div className="flex-1">
+              <label className="relative cursor-pointer bg-white border border-slate-200 text-slate-700 font-medium px-6 py-2.5 rounded-xl hover:bg-slate-50 transition-colors shadow-sm inline-flex items-center gap-2 mb-3">
+                <ImagePlus className="w-4 h-4" />
+                <span>Upload Logo</span>
+                <input 
+                  type="file" 
+                  className="hidden" 
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={isUploading}
+                />
+              </label>
+              
+              <div className="space-y-3">
+                <p className="text-xs text-slate-500 font-medium">Or paste image URL directly:</p>
+                <input
+                  type="text"
+                  value={formData.logoUrl}
+                  onChange={(e) => setFormData({...formData, logoUrl: e.target.value})}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 text-slate-800 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm placeholder-slate-400"
+                  placeholder="https://example.com/logo.png"
+                  disabled={isUploading}
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="flex justify-end pt-8 border-t border-slate-100">
