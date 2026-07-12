@@ -33,7 +33,7 @@ Dokumen ini merekodkan segala isu, ralat (error), dan penyelesaian yang kita had
 **Penyelesaian Kekal:**
 * Di dalam `server/src/server.js`, tetapan CORS telah diubah menjadi sangat fleksibel tetapi selamat:
   ```javascript
-  app.use(cors({
+    app.use(cors({
     origin: true, // Automatik pulangkan Origin sebenar (sangat kebal)
     credentials: true
   }));

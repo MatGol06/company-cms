@@ -76,7 +76,7 @@ export default function ProjectsList() {
                       <p className="text-slate-500 text-xs mt-1 truncate max-w-[250px]">{project.description}</p>
                     </td>
                     <td className="px-6 py-5 text-slate-700 text-sm">
-                      <span className="bg-[#1f1f1f] px-3 py-1 rounded-full text-xs border border-transparent">{project.category || 'Uncategorized'}</span>
+                      <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-medium border border-slate-200">{project.category || 'Uncategorized'}</span>
                     </td>
                     <td className="px-6 py-5 text-slate-500 text-sm">
                       {project.clientName || '-'}
