@@ -62,7 +62,7 @@ export default function PagesList() {
                   <tr key={page._id} className="hover:bg-slate-50 transition-colors group">
                     <td className="px-6 py-5 font-medium text-slate-800">{page.title}</td>
                     <td className="px-6 py-5">
-                      <span className="bg-[#1f1f1f] text-slate-700 px-3 py-1 rounded-md text-xs font-mono border border-transparent">
+                      <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-md text-xs font-mono font-medium border border-slate-200">
                         /{page.slug}
                       </span>
                     </td>

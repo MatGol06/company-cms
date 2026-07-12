@@ -83,7 +83,7 @@ export default function MessagesList() {
                     <td className="px-6 py-5 text-right space-x-2 whitespace-nowrap">
                       <Link 
                         to={`/admin/messages/${msg._id}`} 
-                        className="text-blue-600 hover:text-blue-800 font-medium bg-[#1f1f1f] hover:bg-slate-700 border border-transparent px-4 py-2 rounded-lg transition-colors inline-flex items-center gap-2 text-sm"
+                        className="text-blue-600 hover:text-blue-800 font-medium bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg transition-colors inline-flex items-center gap-2 text-sm"
                       >
                         <Eye className="w-4 h-4" />
                         Read
