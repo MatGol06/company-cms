@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, AlertCircle } from 'lucide-react';
+import { ArrowLeft, AlertCircle, Plus, Trash2, GripVertical, Type, Heading, Image as ImageIcon } from 'lucide-react';
 
 export default function PageEditor() {
   const { slug } = useParams();
@@ -10,9 +10,13 @@ export default function PageEditor() {
 
   const [formData, setFormData] = useState({
     title: '',
-    slug: '',
-    content: '{\n  "heading": "Welcome to the Our Company",\n  "description": "We offer the best services for you."\n}'
+    slug: ''
   });
+  
+  const [blocks, setBlocks] = useState([
+    { id: Date.now().toString(), type: 'heading', content: '' }
+  ]);
+  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -27,12 +31,29 @@ export default function PageEditor() {
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/pages/${slug}`);
       setFormData({
         title: response.data.title,
-        slug: response.data.slug,
-        content: JSON.stringify(response.data.content, null, 2)
+        slug: response.data.slug
       });
+      // Jika content adalah array, kita anggap ia adalah senarai blocks
+      if (Array.isArray(response.data.content)) {
+        setBlocks(response.data.content);
+      } else if (response.data.content && response.data.content.blocks) {
+        setBlocks(response.data.content.blocks);
+      }
     } catch (err) {
       setError('Failed to fetch data halaman dari server.');
     }
+  };
+
+  const addBlock = (type) => {
+    setBlocks([...blocks, { id: Date.now().toString(), type, content: '' }]);
+  };
+
+  const removeBlock = (id) => {
+    setBlocks(blocks.filter(b => b.id !== id));
+  };
+
+  const updateBlock = (id, content) => {
+    setBlocks(blocks.map(b => b.id === id ? { ...b, content } : b));
   };
 
   const handleSubmit = async (e) => {
@@ -41,35 +62,28 @@ export default function PageEditor() {
     setError('');
 
     try {
-      const parsedContent = JSON.parse(formData.content);
-      const config = {};
-
       const payload = {
         title: formData.title,
         slug: formData.slug,
-        content: parsedContent
+        content: blocks // Simpan blocks terus ke database sebagai content
       };
 
       if (isNew) {
-        await axios.post(`${import.meta.env.VITE_API_URL}/pages`, payload, config);
+        await axios.post(`${import.meta.env.VITE_API_URL}/pages`, payload);
       } else {
-        await axios.put(`${import.meta.env.VITE_API_URL}/pages/${slug}`, payload, config);
+        await axios.put(`${import.meta.env.VITE_API_URL}/pages/${slug}`, payload);
       }
       
       navigate('/admin/pages');
     } catch (err) {
-      if (err instanceof SyntaxError) {
-        setError('Error! Format JSON dalam kotak kandungan tidak sah. Pastikan ada " " untuk setiap kunci (key) dan nilai (value).');
-      } else {
-        setError(err.response?.data?.message || 'Gagal menyimpan rekod halaman.');
-      }
+      setError(err.response?.data?.message || 'Gagal menyimpan rekod halaman.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="max-w-5xl mx-auto animate-in fade-in duration-700">
+    <div className="max-w-4xl mx-auto animate-in fade-in duration-700 pb-20">
       
       <div className="flex items-center gap-4 mb-8">
         <button 
@@ -83,7 +97,7 @@ export default function PageEditor() {
           <h2 className="text-3xl font-bold text-slate-800 mb-1">
             {isNew ? 'Create New Page' : `Update: ${formData.title}`}
           </h2>
-          <p className="text-slate-500">Modify the content and structure of this page.</p>
+          <p className="text-slate-500">Visual Page Builder - Build your page block by block</p>
         </div>
       </div>
 
@@ -94,60 +108,109 @@ export default function PageEditor() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-8">
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Page Title</label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({...formData, title: e.target.value})}
-              className="w-full px-5 py-3 bg-slate-50 border border-slate-100 text-slate-800 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder-slate-400"
-              placeholder="e.g: Home"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">URL Slug</label>
-            <input
-              type="text"
-              value={formData.slug}
-              onChange={(e) => setFormData({...formData, slug: e.target.value})}
-              className="w-full px-5 py-3 bg-slate-50 border border-slate-100 text-slate-800 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder-slate-400 disabled:bg-slate-50/50 disabled:text-slate-500 disabled:border-slate-100"
-              placeholder="e.g: about-us"
-              required
-              disabled={!isNew}
-            />
-            {!isNew && <p className="text-xs text-orange-400 mt-2 font-medium">Warning: URL slug cannot be changed after creation.</p>}
-          </div>
-        </div>
-
-        <div>
-          <div className="flex justify-between items-end mb-2">
-            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Content Structure (JSON Editor)</label>
-          </div>
-          <div className="bg-[#0f111a] rounded-2xl overflow-hidden border border-slate-100 focus-within:border-blue-500/50 transition-colors shadow-inner">
-            <div className="bg-[#1a1d27] px-4 py-2 flex gap-2 border-b border-slate-100">
-              <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+        {/* Page Meta Info */}
+        <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Page Title</label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) => setFormData({...formData, title: e.target.value})}
+                className="w-full px-5 py-3 bg-slate-50 border border-slate-100 text-slate-800 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder-slate-400"
+                placeholder="e.g: About Us"
+                required
+              />
             </div>
-            <textarea
-              value={formData.content}
-              onChange={(e) => setFormData({...formData, content: e.target.value})}
-              className="w-full h-80 p-5 bg-transparent text-[#9CDCFE] font-mono text-sm leading-relaxed focus:outline-none resize-y selection:bg-blue-500/30"
-              required
-              spellCheck="false"
-            />
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">URL Slug</label>
+              <input
+                type="text"
+                value={formData.slug}
+                onChange={(e) => setFormData({...formData, slug: e.target.value})}
+                className="w-full px-5 py-3 bg-slate-50 border border-slate-100 text-slate-800 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder-slate-400 disabled:bg-slate-50/50 disabled:text-slate-500 disabled:border-slate-100"
+                placeholder="e.g: about-us"
+                required
+                disabled={!isNew}
+              />
+              {!isNew && <p className="text-xs text-orange-400 mt-2 font-medium">Warning: URL slug cannot be changed.</p>}
+            </div>
           </div>
         </div>
 
-        <div className="flex justify-end pt-6 border-t border-slate-100">
+        {/* Content Builder */}
+        <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100">
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-slate-800">Page Content</h3>
+            <p className="text-sm text-slate-500">Add and arrange content blocks for this page.</p>
+          </div>
+
+          <div className="space-y-4 mb-8">
+            {blocks.map((block, index) => (
+              <div key={block.id} className="group relative bg-slate-50 border border-slate-100 rounded-2xl p-4 flex gap-4 transition-all hover:border-blue-300">
+                <div className="mt-2 text-slate-400 cursor-move hover:text-slate-600">
+                  <GripVertical className="w-5 h-5" />
+                </div>
+                
+                <div className="flex-1 space-y-2">
+                  <div className="flex items-center gap-2 mb-2">
+                    {block.type === 'heading' && <span className="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wider flex items-center gap-1"><Heading className="w-3 h-3"/> Heading</span>}
+                    {block.type === 'paragraph' && <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wider flex items-center gap-1"><Type className="w-3 h-3"/> Paragraph</span>}
+                    {block.type === 'image' && <span className="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wider flex items-center gap-1"><ImageIcon className="w-3 h-3"/> Image URL</span>}
+                  </div>
+                  
+                  {block.type === 'paragraph' ? (
+                    <textarea 
+                      value={block.content}
+                      onChange={(e) => updateBlock(block.id, e.target.value)}
+                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none resize-y min-h-[120px]"
+                      placeholder="Write your paragraph here..."
+                      required
+                    />
+                  ) : (
+                    <input 
+                      type="text"
+                      value={block.content}
+                      onChange={(e) => updateBlock(block.id, e.target.value)}
+                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none"
+                      placeholder={block.type === 'heading' ? 'Type your heading here...' : 'Paste image URL here...'}
+                      required
+                    />
+                  )}
+                </div>
+
+                <button 
+                  type="button" 
+                  onClick={() => removeBlock(block.id)}
+                  className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* Add Block Controls */}
+          <div className="flex flex-wrap gap-3">
+            <button type="button" onClick={() => addBlock('heading')} className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2 rounded-xl transition-colors flex items-center gap-2 text-sm">
+              <Plus className="w-4 h-4" /> Add Heading
+            </button>
+            <button type="button" onClick={() => addBlock('paragraph')} className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2 rounded-xl transition-colors flex items-center gap-2 text-sm">
+              <Plus className="w-4 h-4" /> Add Paragraph
+            </button>
+            <button type="button" onClick={() => addBlock('image')} className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2 rounded-xl transition-colors flex items-center gap-2 text-sm">
+              <Plus className="w-4 h-4" /> Add Image
+            </button>
+          </div>
+        </div>
+
+        <div className="flex justify-end pt-4">
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-[#1f1f1f] hover:bg-black text-white font-medium px-8 py-3 rounded-2xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-70 disabled:hover:translate-y-0 disabled:shadow-none"
+            className="bg-[#1f1f1f] hover:bg-black text-white font-medium px-10 py-4 rounded-2xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-70 disabled:hover:translate-y-0 disabled:shadow-none text-lg"
           >
             {isLoading ? 'Saving...' : (isNew ? 'Publish Page' : 'Save Changes')}
           </button>

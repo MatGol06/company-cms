@@ -54,7 +54,7 @@ export default function DynamicPage() {
         
         {/* Render JSON blocks content */}
         <div className="prose prose-lg prose-slate max-w-none">
-          {pageData.blocks && pageData.blocks.map((block, index) => {
+          {pageData.content && Array.isArray(pageData.content) && pageData.content.map((block, index) => {
             if (block.type === 'paragraph') {
               return <p key={index} className="text-slate-600 leading-relaxed mb-6">{block.content}</p>;
             }
